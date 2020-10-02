@@ -112,6 +112,23 @@ class PhilipsPuriAir extends eqLogic {
 		$refresh->setType('action');
         $refresh->setSubType('other');
         $refresh->save();
+        
+        $state = $this->getCmd(null, 'state');
+		if (!is_object($state)) {
+			$state = new PhilipsPuriAirCmd();
+			$state->setName(__('Etat', __FILE__));
+        }
+        
+		$state->setEqLogic_id($this->getId());
+		$state->setLogicalId('state');
+		$state->setType('info');
+        $state->setSubType('binary');
+        $state->setIsVisible(0);
+        $state->setIsHistorized(1);
+        $state->setTemplate('dashboard','prise');
+        $state->setTemplate('mobile','prise');
+        $state->setDisplay("generic_type","ENERGY_STATE");
+        $state->save();
 
         $on = $this->getCmd(null, 'on');
 		if (!is_object($on)) {
@@ -146,23 +163,6 @@ class PhilipsPuriAir extends eqLogic {
         $off->setTemplate('mobile','prise');
         $off->setDisplay("generic_type","ENERGY_OFF");
         $off->save();
-
-        $state = $this->getCmd(null, 'state');
-		if (!is_object($state)) {
-			$state = new PhilipsPuriAirCmd();
-			$state->setName(__('Etat', __FILE__));
-        }
-        
-		$state->setEqLogic_id($this->getId());
-		$state->setLogicalId('state');
-		$state->setType('info');
-        $state->setSubType('binary');
-        $state->setIsVisible(0);
-        $state->setIsHistorized(1);
-        $state->setTemplate('dashboard','prise');
-        $state->setTemplate('mobile','prise');
-        $state->setDisplay("generic_type","ENERGY_STATE");
-        $state->save();
     }
 
     public function preUpdate() {
