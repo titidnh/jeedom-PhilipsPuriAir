@@ -101,8 +101,6 @@ class PhilipsPuriAir extends eqLogic {
     }
 
     public function postSave() {
-		// 	$refresh = new PhilipsPuriAirCmd();
-
         $filename = dirname(__FILE__) . '/../config/pureCmd.json';
 		if (!is_file($filename)) {
 		    throw new \Exception("File $filename does not exist");
@@ -111,7 +109,6 @@ class PhilipsPuriAir extends eqLogic {
 		$device = is_json(file_get_contents($filename), array());        
         foreach($device['commands'] as $key => $cmd)
 		{
-            log::add('PhilipsPuriAir', 'debug', $cmd);
 			if (array_key_exists('logicalId',$cmd))
 				$id = $cmd['logicalId'];
 			else
@@ -133,8 +130,55 @@ class PhilipsPuriAir extends eqLogic {
 			if (array_key_exists('name',$cmd))
 				$cmd['name'] = __($cmd['name'],__FILE__);
         }
-            
-        $this->import($device);
+
+        $cmd_order = 0;
+        foreach($this->getCmd() as $liste_cmd)
+        {
+            if ($liste_cmd->getOrder()>$cmd_order)
+                $cmd_order = $liste_cmd->getOrder()+1;
+        }
+        $link_cmds = array();
+        $link_actions = array();
+        $arrayToRemove = [];
+        foreach ($device['commands'] as $command) {
+            $cmd = null;
+            foreach ($this->getCmd() as $liste_cmd) {
+                if ((isset($command['logicalId']) && $liste_cmd->getLogicalId() == $command['logicalId'])
+                || (isset($command['name']) && $liste_cmd->getName() == $command['name'])) {
+                    $cmd = $liste_cmd;
+                    break;
+                }
+            }
+            try 
+            {
+                if ($cmd === null || !is_object($cmd)) {
+                    $cmd = new PhilipsPuriAirCmd();
+                    $cmd->setOrder($cmd_order);
+                    $cmd->setEqLogic_id($this->getId());
+                } else {
+                    $command['name'] = $cmd->getName();
+                    if (isset($command['display'])) {
+                        unset($command['display']);
+                    }
+                }
+                utils::a2o($cmd, $command);
+                $cmd->setConfiguration('logicalId', $cmd->getLogicalId());
+                $cmd->save();
+                if (isset($command['value'])) {
+                    $link_cmds[$cmd->getId()] = $command['value'];
+                }
+                if (isset($command['configuration']) && isset($command['configuration']['updateCmdId'])) {
+                    $link_actions[$cmd->getId()] = $command['configuration']['updateCmdId'];
+                }
+                $cmd_order++;
+            } catch (Exception $exc) {
+                log::error('kkasa','error','Error importing '.$command['name']);
+                throw $exc;
+            }
+            $cmd->event('');
+        }
+
+        $this->save();
     }
 
     public function preUpdate() {
@@ -154,10 +198,6 @@ class PhilipsPuriAir extends eqLogic {
     }
 
     public function updateData(){
-    }
-
-    public function import($_configuration) {
-        log::add('PhilipsPuriAir', 'debug', $_configuration);
     }
 
     public function setState($state){
