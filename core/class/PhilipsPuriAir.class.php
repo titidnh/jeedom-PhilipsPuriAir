@@ -141,7 +141,7 @@ class PhilipsPuriAir extends eqLogic {
 		$on->setType('action');
         $on->setSubType('other');
         $on->setIsVisible(1);
-        $on->setValue('state');
+        $on->setValue($state->getId());
         $on->setTemplate('dashboard','prise');
         $on->setTemplate('mobile','prise');
         $on->setDisplay("generic_type","ENERGY_ON");
