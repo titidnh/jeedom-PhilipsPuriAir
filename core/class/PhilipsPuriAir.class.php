@@ -114,6 +114,7 @@ class PhilipsPuriAir extends eqLogic {
         $refresh->save();
         
         $link_cmds = array();
+        $link_actions = array();
 
         $on = $this->getCmd(null, 'on');
 		if (!is_object($on)) {
@@ -156,6 +157,11 @@ class PhilipsPuriAir extends eqLogic {
         $state->setIsVisible(0);
         $state->setIsHistorized(1);
         $state->save();
+
+        $on->setConfiguration('updateCmdId', $state->getId());
+        $on->save();
+        $off->setConfiguration('updateCmdId', $state->getId());
+        $off->save();
 
         if (count($link_cmds) > 0) {
             foreach ($this->getCmd() as $eqLogic_cmd) {
