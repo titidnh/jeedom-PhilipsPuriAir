@@ -108,13 +108,10 @@ class PhilipsPuriAir extends eqLogic {
 		    throw new \Exception("File $filename does not exist");
         }
         
-		$device = is_json(file_get_contents($filename), array());
-		// if (!is_array($device) || !isset($device['commands'])) {
-		// 	break;
-		// }
-        
+		$device = is_json(file_get_contents($filename), array());        
         foreach($device['commands'] as $key => $cmd)
 		{
+            log::add('PhilipsPuriAir', 'debug', $cmd);
 			if (array_key_exists('logicalId',$cmd))
 				$id = $cmd['logicalId'];
 			else
