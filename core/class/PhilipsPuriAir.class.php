@@ -109,31 +109,33 @@ class PhilipsPuriAir extends eqLogic {
         }
         
 		$device = is_json(file_get_contents($filename), array());
-		if (!is_array($device) || !isset($device['commands'])) {
-			break;
-		}
+		// if (!is_array($device) || !isset($device['commands'])) {
+		// 	break;
+		// }
         
-        // foreach($device['commands'] as $key => $cmd)
-		// {
-		// 	if (array_key_exists('logicalId',$cmd))
-		// 		$id = $cmd['logicalId'];
-		// 	else
-		// 	{
-		// 		if (array_key_exists('name',$cmd))
-		// 			$id = $cmd['name'];
-		// 		else {
-		// 			$id = '';
-		// 		}
-		// 	}
+        foreach($device['commands'] as $key => $cmd)
+		{
+			if (array_key_exists('logicalId',$cmd))
+				$id = $cmd['logicalId'];
+			else
+			{
+				if (array_key_exists('name',$cmd))
+					$id = $cmd['name'];
+				else {
+					$id = '';
+				}
+			}
             
-        //     $curCmd = $this->getCmd(null, $id);
-        //     if (is_object($curCmd)) {
-		// 		unset($device['commands'][$key]);
-		// 		continue;
-		// 	}
-		// 	if (array_key_exists('name',$cmd))
-		// 		$cmd['name'] = __($cmd['name'],__FILE__);
-        // }
+            $curCmd = $this->getCmd(null, $id);
+            
+            if (is_object($curCmd)) {
+				unset($device['commands'][$key]);
+				continue;
+            }
+            
+			if (array_key_exists('name',$cmd))
+				$cmd['name'] = __($cmd['name'],__FILE__);
+        }
             
         // $this->import($device);
     }
