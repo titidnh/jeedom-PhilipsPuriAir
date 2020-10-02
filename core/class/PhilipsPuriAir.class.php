@@ -125,7 +125,7 @@ class PhilipsPuriAir extends eqLogic {
 		$on->setLogicalId('on');
 		$on->setType('action');
         $on->setSubType('other');
-        $on->setVisible(1);
+        $on->setIsVisible(1);
         $on->save();
         $link_cmds[$on->getId()] = 'state';
 
@@ -139,7 +139,7 @@ class PhilipsPuriAir extends eqLogic {
 		$off->setLogicalId('off');
 		$off->setType('action');
         $off->setSubType('other');
-        $off->setVisible(1);
+        $off->setIsVisible(1);
         $off->save();
         $link_cmds[$off->getId()] = 'state';
 
@@ -153,7 +153,7 @@ class PhilipsPuriAir extends eqLogic {
 		$state->setLogicalId('state');
 		$state->setType('info');
         $state->setSubType('binary');
-        $state->setVisible(0);
+        $state->setIsVisible(0);
         $state->setIsHistorized(1);
         $state->save();
 
