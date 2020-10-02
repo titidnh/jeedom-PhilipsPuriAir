@@ -132,7 +132,6 @@ class PhilipsPuriAir extends eqLogic {
 			}
 			if (array_key_exists('name',$cmd))
 				$cmd['name'] = __($cmd['name'],__FILE__);
-            }
         }
             
         $this->import($device);
