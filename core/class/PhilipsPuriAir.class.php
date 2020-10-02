@@ -188,7 +188,7 @@ class PhilipsPuriAir extends eqLogic {
         $cmd = 'sudo airctrl --ipaddr '. $this->getConfiguration("IP") .' --protocol coap --pwr '.$state;
         log::add('PhilipsPuriAir', 'debug', $cmd);
         shell_exec($cmd);
-        this->updateData();
+        $this->updateData();
     }
 }
 
