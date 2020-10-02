@@ -1,0 +1,16 @@
+{
+	"id" : "PhilipsPuriAir",
+	"name" : "Philips Purifacteur Air",
+	"description" : "Philips Purifacteur Air",
+	"licence" : "AGPL",
+	"author" : "Thierry",
+	"require" : "3.2",
+	"category" : "energy",
+	"hasDependency" : true,
+	"hasOwnDeamon" : false,
+	"maxDependancyInstallTime" : 60,
+	"changelog" : "https://jeedom.github.io/plugin-template/#language#/changelog",
+    "documentation" : "https://jeedom.github.io/plugin-template/#language#/",
+	"language" : ["fr_FR"],
+	"compatibility" : ["rpi","diy"]
+}
