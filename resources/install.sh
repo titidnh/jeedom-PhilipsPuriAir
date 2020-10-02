@@ -10,6 +10,8 @@ echo "********************************************************"
 apt-get update
 echo 30 > ${PROGRESS_FILE}
 pip3 install --upgrade pip
+pip3 install py-air-control
+pip3 install -U git+https://github.com/Tanganelli/CoAPthon3@89d5173
 echo 100 > ${PROGRESS_FILE}
 rm ${PROGRESS_FILE}
 echo "********************************************************"
