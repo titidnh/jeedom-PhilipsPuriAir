@@ -41,6 +41,13 @@ class PhilipsPuriAir extends eqLogic {
         return array('script' => dirname(__FILE__) . '/../../resources/install.sh ' . jeedom::getTmpFolder('PhilipsPuriAir') . '/dependance', 'log' => log::getPathToLog(__CLASS__ . '_update'));
     }
 
+    public static function cron() {
+        if (strval(config::byKey('Refresh','PhilipsPuriAir','15')) == '1')
+        {
+            self::ExecuteCron();
+        }
+    }
+
     public static function cron5() {
         if (strval(config::byKey('Refresh','PhilipsPuriAir','15')) == '5')
         {
@@ -104,7 +111,65 @@ class PhilipsPuriAir extends eqLogic {
 		$refresh->setLogicalId('refresh');
 		$refresh->setType('action');
 		$refresh->setSubType('other');
-		$refresh->save();
+        $refresh->save();
+        
+        $link_cmds = array();
+
+        $on = $this->getCmd(null, 'on');
+		if (!is_object($on)) {
+			$on = new PhilipsPuriAirCmd();
+			$on->setName(__('On', __FILE__));
+        }
+        
+		$on->setEqLogic_id($this->getId());
+		$on->setLogicalId('on');
+		$on->setType('action');
+        $on->setSubType('other');
+        $on->setVisible(1);
+        $on->save();
+        $link_cmds[$on->getId()] = 'state';
+
+        $off = $this->getCmd(null, 'off');
+		if (!is_object($off)) {
+			$off = new PhilipsPuriAirCmd();
+			$off->setName(__('Off', __FILE__));
+        }
+        
+		$off->setEqLogic_id($this->getId());
+		$off->setLogicalId('off');
+		$off->setType('action');
+        $off->setSubType('other');
+        $off->setVisible(1);
+        $off->save();
+        $link_cmds[$off->getId()] = 'state';
+
+        $state = $this->getCmd(null, 'state');
+		if (!is_object($state)) {
+			$state = new PhilipsPuriAirCmd();
+			$state->setName(__('Etat', __FILE__));
+        }
+        
+		$state->setEqLogic_id($this->getId());
+		$state->setLogicalId('state');
+		$state->setType('info');
+        $state->setSubType('binary');
+        $state->setVisible(0);
+        $state->setIsHistorized(1);
+        $state->save();
+
+        if (count($link_cmds) > 0) {
+            foreach ($this->getCmd() as $eqLogic_cmd) {
+                foreach ($link_cmds as $cmd_id => $link_cmd) {
+                    if ($link_cmd == $eqLogic_cmd->getLogicalId()) {
+                        $cmd = cmd::byId($cmd_id);
+                        if (is_object($cmd)) {
+                            $cmd->setValue($eqLogic_cmd->getId());
+                            $cmd->save();
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public function preUpdate() {
@@ -125,6 +190,9 @@ class PhilipsPuriAir extends eqLogic {
 
     public function updateData(){
     }
+
+    public function setState($state){
+    }
 }
 
 class PhilipsPuriAirCmd extends cmd {
@@ -144,7 +212,13 @@ class PhilipsPuriAirCmd extends cmd {
         log::add('PhilipsPuriAir', 'debug', print_r($eqLogic,true));
         if ($this->getLogicalId() == 'refresh') {
 			$eqLogic->updateData();
-		}
+        }
+        if ($this->getLogicalId() == 'on') {
+            $eqLogic->setState(1);
+        }
+        if ($this->getLogicalId() == 'off') {
+            $eqLogic->setState(0);
+        }
     }
 }
 
