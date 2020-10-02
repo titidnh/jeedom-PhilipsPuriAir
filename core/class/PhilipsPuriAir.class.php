@@ -113,23 +113,6 @@ class PhilipsPuriAir extends eqLogic {
         $refresh->setSubType('other');
         $refresh->save();
 
-        $state = $this->getCmd(null, 'state');
-		if (!is_object($state)) {
-			$state = new PhilipsPuriAirCmd();
-			$state->setName(__('Etat', __FILE__));
-        }
-        
-		$state->setEqLogic_id($this->getId());
-		$state->setLogicalId('state');
-		$state->setType('info');
-        $state->setSubType('binary');
-        $state->setIsVisible(0);
-        $state->setIsHistorized(1);
-        $state->setTemplate('dashboard','prise');
-        $state->setTemplate('mobile','prise');
-        $state->setDisplay("generic_type","ENERGY_STATE");
-        $state->save();
-
         $on = $this->getCmd(null, 'on');
 		if (!is_object($on)) {
 			$on = new PhilipsPuriAirCmd();
@@ -141,7 +124,7 @@ class PhilipsPuriAir extends eqLogic {
 		$on->setType('action');
         $on->setSubType('other');
         $on->setIsVisible(1);
-        $on->setValue($state->getId());
+        $on->setValue('state');
         $on->setTemplate('dashboard','prise');
         $on->setTemplate('mobile','prise');
         $on->setDisplay("generic_type","ENERGY_ON");
@@ -158,11 +141,28 @@ class PhilipsPuriAir extends eqLogic {
 		$off->setType('action');
         $off->setSubType('other');
         $off->setIsVisible(1);
-        $off->setValue(($state->getId());
+        $off->setValue('state');
         $off->setTemplate('dashboard','prise');
         $off->setTemplate('mobile','prise');
         $off->setDisplay("generic_type","ENERGY_OFF");
         $off->save();
+
+        $state = $this->getCmd(null, 'state');
+		if (!is_object($state)) {
+			$state = new PhilipsPuriAirCmd();
+			$state->setName(__('Etat', __FILE__));
+        }
+        
+		$state->setEqLogic_id($this->getId());
+		$state->setLogicalId('state');
+		$state->setType('info');
+        $state->setSubType('binary');
+        $state->setIsVisible(0);
+        $state->setIsHistorized(1);
+        $state->setTemplate('dashboard','prise');
+        $state->setTemplate('mobile','prise');
+        $state->setDisplay("generic_type","ENERGY_STATE");
+        $state->save();
     }
 
     public function preUpdate() {
