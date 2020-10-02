@@ -113,40 +113,6 @@ class PhilipsPuriAir extends eqLogic {
         $refresh->setSubType('other');
         $refresh->save();
 
-        $on = $this->getCmd(null, 'on');
-		if (!is_object($on)) {
-			$on = new PhilipsPuriAirCmd();
-			$on->setName(__('On', __FILE__));
-        }
-        
-		$on->setEqLogic_id($this->getId());
-		$on->setLogicalId('on');
-		$on->setType('action');
-        $on->setSubType('other');
-        $on->setIsVisible(1);
-        $on->setValue('state');
-        $on->setTemplate('dashboard','prise');
-        $on->setTemplate('mobile','prise');
-        $on->setDisplay("generic_type","ENERGY_ON");
-        $on->save();
-
-        $off = $this->getCmd(null, 'off');
-		if (!is_object($off)) {
-			$off = new PhilipsPuriAirCmd();
-			$off->setName(__('Off', __FILE__));
-        }
-        
-		$off->setEqLogic_id($this->getId());
-		$off->setLogicalId('off');
-		$off->setType('action');
-        $off->setSubType('other');
-        $off->setIsVisible(1);
-        $off->setValue('state');
-        $off->setTemplate('dashboard','prise');
-        $off->setTemplate('mobile','prise');
-        $off->setDisplay("generic_type","ENERGY_OFF");
-        $off->save();
-
         $state = $this->getCmd(null, 'state');
 		if (!is_object($state)) {
 			$state = new PhilipsPuriAirCmd();
@@ -163,86 +129,40 @@ class PhilipsPuriAir extends eqLogic {
         $state->setTemplate('mobile','prise');
         $state->setDisplay("generic_type","ENERGY_STATE");
         $state->save();
+
+        $on = $this->getCmd(null, 'on');
+		if (!is_object($on)) {
+			$on = new PhilipsPuriAirCmd();
+			$on->setName(__('On', __FILE__));
+        }
         
+		$on->setEqLogic_id($this->getId());
+		$on->setLogicalId('on');
+		$on->setType('action');
+        $on->setSubType('other');
+        $on->setIsVisible(1);
+        $on->setValue($state->getId());
+        $on->setTemplate('dashboard','prise');
+        $on->setTemplate('mobile','prise');
+        $on->setDisplay("generic_type","ENERGY_ON");
+        $on->save();
 
-        // $filename = dirname(__FILE__) . '/../config/pureCmd.json';
-		// if (!is_file($filename)) {
-		//     throw new \Exception("File $filename does not exist");
-        // }
+        $off = $this->getCmd(null, 'off');
+		if (!is_object($off)) {
+			$off = new PhilipsPuriAirCmd();
+			$off->setName(__('Off', __FILE__));
+        }
         
-		// $device = is_json(file_get_contents($filename), array());        
-        // foreach($device['commands'] as $key => $cmd)
-		// {
-		// 	if (array_key_exists('logicalId',$cmd))
-		// 		$id = $cmd['logicalId'];
-		// 	else
-		// 	{
-		// 		if (array_key_exists('name',$cmd))
-		// 			$id = $cmd['name'];
-		// 		else {
-		// 			$id = '';
-		// 		}
-		// 	}
-            
-        //     $curCmd = $this->getCmd(null, $id);
-
-        //     if (is_object($curCmd)) {
-		// 		unset($device['commands'][$key]);
-		// 		continue;
-        //     }
-            
-		// 	if (array_key_exists('name',$cmd))
-		// 		$cmd['name'] = __($cmd['name'],__FILE__);
-        // }
-
-        // $cmd_order = 0;
-        // foreach($this->getCmd() as $liste_cmd)
-        // {
-        //     if ($liste_cmd->getOrder()>$cmd_order)
-        //         $cmd_order = $liste_cmd->getOrder()+1;
-        // }
-        // $link_cmds = array();
-        // $link_actions = array();
-        // $arrayToRemove = [];
-        // foreach ($device['commands'] as $command) {
-        //     $cmd = null;
-        //     foreach ($this->getCmd() as $liste_cmd) {
-        //         if ((isset($command['logicalId']) && $liste_cmd->getLogicalId() == $command['logicalId'])
-        //         || (isset($command['name']) && $liste_cmd->getName() == $command['name'])) {
-        //             $cmd = $liste_cmd;
-        //             break;
-        //         }
-        //     }
-        //     try 
-        //     {
-        //         if ($cmd === null || !is_object($cmd)) {
-        //             $cmd = new PhilipsPuriAirCmd();
-        //             $cmd->setOrder($cmd_order);
-        //             $cmd->setEqLogic_id($this->getId());
-        //         } else {
-        //             $command['name'] = $cmd->getName();
-        //             if (isset($command['display'])) {
-        //                 unset($command['display']);
-        //             }
-        //         }
-        //         utils::a2o($cmd, $command);
-        //         $cmd->setConfiguration('logicalId', $cmd->getLogicalId());
-        //         $cmd->save();
-        //         if (isset($command['value'])) {
-        //             $link_cmds[$cmd->getId()] = $command['value'];
-        //         }
-        //         if (isset($command['configuration']) && isset($command['configuration']['updateCmdId'])) {
-        //             $link_actions[$cmd->getId()] = $command['configuration']['updateCmdId'];
-        //         }
-        //         $cmd_order++;
-        //     } catch (Exception $exc) {
-        //         log::error('kkasa','error','Error importing '.$command['name']);
-        //         throw $exc;
-        //     }
-        //     $cmd->event('');
-        // }
-
-        $this->save();
+		$off->setEqLogic_id($this->getId());
+		$off->setLogicalId('off');
+		$off->setType('action');
+        $off->setSubType('other');
+        $off->setIsVisible(1);
+        $off->setValue(($state->getId());
+        $off->setTemplate('dashboard','prise');
+        $off->setTemplate('mobile','prise');
+        $off->setDisplay("generic_type","ENERGY_OFF");
+        $off->save();
     }
 
     public function preUpdate() {
