@@ -182,6 +182,28 @@ class PhilipsPuriAir extends eqLogic {
     }
 
     public function updateData(){
+        $cmd = 'sudo airctrl --ipaddr '. $this->getConfiguration("IP") .' --protocol coap';
+        $result = shell_exec($cmd);
+        $onOffStatus = '';
+        $pm25 = '';
+        $iaql = '';
+        foreach(preg_split("/((\r?\n)|(\r\n?))/", $result) as $line){
+            if(substr( $line, 0, 5 ) === '[pwr]')
+            {
+                $onOffStatus = str_replace("[pwr]                         Power: ", "", $line);
+            }
+            if(substr( $line, 0, 6 ) === '[pm25]')
+            {
+                $pm25 = str_replace("[pm25]                        PM25: ", "", $line);
+            }
+            if(substr( $line, 0, 6 ) === '[iaql]')
+            {
+                $iaql = str_replace("[iaql]                        Allergen index: ", "", $line);
+            }
+        }
+
+        $stateCmd = $this->getCmd(null, 'state');
+        $stateCmd->event($onOffStatus === "ON" ? 1 : 0);
     }
 
     public function setState($state){              
