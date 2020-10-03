@@ -163,6 +163,37 @@ class PhilipsPuriAir extends eqLogic {
         $off->setTemplate('mobile','prise');
         $off->setDisplay("generic_type","ENERGY_OFF");
         $off->save();
+
+        // Values
+        $pm25 = $this->getCmd(null, 'pm25');
+		if (!is_object($pm25)) {
+			$pm25 = new PhilipsPuriAirCmd();
+			$pm25->setName(__('PM2.5', __FILE__));
+        }
+        
+		$pm25->setEqLogic_id($this->getId());
+		$pm25->setLogicalId('pm25');
+		$pm25->setType('info');
+        $pm25->setSubType('numeric');
+        $pm25->setIsHistorized(1);
+        $pm25->setIsVisible(1);
+        $pm25->setConfiguration('maxValue', 100);
+        $pm25->save();
+
+        $iaql = $this->getCmd(null, 'iaql');
+		if (!is_object($iaql)) {
+			$iaql = new PhilipsPuriAirCmd();
+			$iaql->setName(__('IQA Intérieur', __FILE__));
+        }
+        
+		$iaql->setEqLogic_id($this->getId());
+		$iaql->setLogicalId('iaql');
+		$iaql->setType('info');
+        $iaql->setSubType('numeric');
+        $iaql->setIsHistorized(1);
+        $iaql->setIsVisible(1);
+        $iaql->setConfiguration('maxValue', 100);
+        $iaql->save();
     }
 
     public function preUpdate() {
@@ -204,21 +235,23 @@ class PhilipsPuriAir extends eqLogic {
 
         $stateCmd = $this->getCmd(null, 'state');
         $stateCmd->event($onOffStatus === "ON" ? 1 : 0);
+
+        $pm25Cmd = $this->getCmd(null, 'pm25');
+        $pm25Cmd->event($pm25);
+
+        $iaqlCmd = $this->getCmd(null, 'iaql');
+        $iaqlCmd->event($iaql);
     }
 
     public function setState($state){              
         $cmd = 'sudo airctrl --ipaddr '. $this->getConfiguration("IP") .' --protocol coap --pwr '.$state;
         log::add('PhilipsPuriAir', 'debug', $cmd);
-        for ($i = 1; $i <= 5; $i++) {
-            $stateCmd = $this->getCmd(null, 'state');
-            if($stateCmd->getValue() != $state)
-            {
-                log::add('PhilipsPuriAir', 'debug','Execute state (old value: '. $stateCmd->getValue() .' ) update try nbr: '.$i);
-                shell_exec($cmd);
-                $this->updateData();
-                sleep(1);
-            }
+        for ($i = 1; $i <= 3; $i++) {
+            shell_exec($cmd);
+            sleep(1);
         }
+        
+        $this->updateData();
     }
 }
 
