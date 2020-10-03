@@ -209,8 +209,16 @@ class PhilipsPuriAir extends eqLogic {
     public function setState($state){              
         $cmd = 'sudo airctrl --ipaddr '. $this->getConfiguration("IP") .' --protocol coap --pwr '.$state;
         log::add('PhilipsPuriAir', 'debug', $cmd);
-        shell_exec($cmd);
-        $this->updateData();
+        for ($i = 1; $i <= 5; $i++) {
+            $stateCmd = $this->getCmd(null, 'state');
+            if($stateCmd->getValue() != $state)
+            {
+                log::add('PhilipsPuriAir', 'debug','Execute state (old value: '. $stateCmd->getValue() .' ) update try nbr: '.$i);
+                shell_exec($cmd);
+                $this->updateData();
+                sleep(1);
+            }
+        }
     }
 }
 
