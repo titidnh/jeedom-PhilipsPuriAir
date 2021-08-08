@@ -233,14 +233,23 @@ class PhilipsPuriAir extends eqLogic {
             }
         }
 
-        $stateCmd = $this->getCmd(null, 'state');
-        $stateCmd->event($onOffStatus === "ON" ? 1 : 0);
+        if($onOffStatus <> '')
+        {
+           $stateCmd = $this->getCmd(null, 'state');
+           $stateCmd->event($onOffStatus === "ON" ? 1 : 0);
+        }
 
-        $pm25Cmd = $this->getCmd(null, 'pm25');
-        $pm25Cmd->event($pm25);
+        if($pm25 <> '')
+        {
+           $pm25Cmd = $this->getCmd(null, 'pm25');
+           $pm25Cmd->event($pm25);
+        }
 
-        $iaqlCmd = $this->getCmd(null, 'iaql');
-        $iaqlCmd->event($iaql);
+        if($iaql <> '')
+        {
+           $iaqlCmd = $this->getCmd(null, 'iaql');
+           $iaqlCmd->event($iaql);
+        }
     }
 
     public function setState($state){              
